@@ -498,9 +498,9 @@ for (const code of [
   '*',  // × (multiplication)
   '/',  // ÷ (division)
   '=',  // =
+  '~~', // ≈
   '>=', // ≥
   '<=', // ≤
-  '~~', // ≈
   '!=', // ≠
   '.',  // · (middle dot)
   'o',  // ° (degree)
