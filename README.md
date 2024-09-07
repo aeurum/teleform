@@ -481,10 +481,6 @@ const result = md.to_entities(
 You can use a few Unicode symbols with the `symbol` function.
 ```
 for (const code of [
-  'a',  // α (alpha)
-  'b',  // β (beta)
-  'g',  // γ (gamma)
-  'd',  // δ (delta)
   '0',  // 🯰
   '1',  // 🯱
   '2',  // 🯲
