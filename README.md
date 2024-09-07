@@ -7,12 +7,28 @@ npm i teleform
 ```
 
 ## Usage
-You can use Teleform to format messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa.
+You can use Teleform to format messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa, use Unicode symbols, and form Telegram links.
 ```
-const { STYLES, PARSE_MODES, mdv2, md, html, mdv1, newlines, ln } = require('teleform')
-// import { STYLES, PARSE_MODES, mdv2, md, html, mdv1, newlines, ln } from 'teleform'
+const {
+  STYLES, PARSE_MODES,
+  mdv2, md, html, mdv1,
+  newlines, ln,
+  symbol, sm,
+  link, telink
+} = require('teleform')
+// import {
+  STYLES, PARSE_MODES,
+  mdv2, md, html, mdv1,
+  newlines, ln,
+  symbol, sm,
+  link, telink
+} from 'teleform'
 
-console.log(STYLES === PARSE_MODES && mdv2 === md && newlines === ln) // true
+console.log(STYLES === PARSE_MODES) // true
+console.log(md === mdv2)            // true
+console.log(ln === newlines)        // true
+console.log(sm === symbol)          // true
+console.log(telink === link)        // true
 ```
 
 ### Formatting
@@ -31,8 +47,7 @@ const text = [
   mdv1.link('*_link_*', 'http://www.example.com/'),
   mdv1.link('link with ‘\\’', 'http://www.example.com/\\'),
   mdv1.bold('link with ‘)’ will fail'),
-  mdv1.mention('*_mention_*', 123456789),
-  mdv1.blockquote('*_just plain text_*'),
+  mdv1.mention('*_mention_*', 1234567890),
   mdv1.code('code'),
   mdv1.pre('code block'),
   mdv1.pre('console.log("javascript code block")', 'javascript')
@@ -59,7 +74,7 @@ const text = [
   html.spoiler('<spoiler>'),
   html.telegram_spoiler('<telegram spoiler>'),
   html.text_link('<link>', 'http://www.example.com/'),
-  html.text_mention('<mention>', 123456789),
+  html.text_mention('<mention>', 1234567890),
   html.custom_emoji('👍', 5368324170671202286),
   html.blockquote('<blockquote first line>\n' +
                   '<blockquote second line>\n' +
@@ -89,7 +104,7 @@ const text = [
   md.link('[website](link)', 'http://www.example.com/'),
   md.link('website link with ‘\\’', 'http://www.example.com//\\'),
   md.link('website link with ‘)’', 'http://www.example.com/()'),
-  md.mention('[user](mention)', 123456789),
+  md.mention('[user](mention)', 1234567890),
   md.emoji('👍', 5368324170671202286),
   md.quote('>blockquote first line\n' +
             '>blockquote second line\n' +
@@ -167,7 +182,10 @@ const text = mdv1.to_html('<& *just bold text* &>')
 
 #### HTML to MarkdownV2
 ```
-const text = html.to_md('([{ \\~_=/ | `_> <b>bold <i>italic <u>underline</u></i></b> -_* ! \\+_#/ }])')
+const text = html.to_md(
+  '([{ \\~_=/ | `_> ' +
+  '<b>bold <i>italic <u>underline</u></i></b>' +
+  ' -_* ! \\+_#/ }])');
 ```
 
 #### MarkdownV2 to HTML
@@ -210,7 +228,7 @@ const entities = [
     offset: 17,
     length: 7,
     type: 'text_mention',
-    user: { id: 123456789 }
+    user: { id: 1234567890 }
   },
   { offset: 25, length: 4, type: 'code' },
   { offset: 30, length: 3, type: 'pre' },
@@ -245,7 +263,7 @@ const entities = [
     offset: 49,
     length: 7,
     type: 'text_mention',
-    user: { id: 123456789 }
+    user: { id: 1234567890 }
   },
   { offset: 57, length: 4, type: 'code' },
   { offset: 62, length: 9, type: 'blockquote' },
@@ -282,7 +300,7 @@ const entities = [
     offset: 49,
     length: 7,
     type: 'text_mention',
-    user: { id: 123456789 }
+    user: { id: 1234567890 }
   },
   { offset: 57, length: 4, type: 'code' },
   { offset: 62, length: 9, type: 'blockquote' },
@@ -322,7 +340,7 @@ const results = [
 ```
 const text = '*bold*\n_italic_\n' +
     '[link](http://www.example.com/)\n' +
-    '[mention](tg://user?id=123456789)\n' +
+    '[mention](tg://user?id=1234567890)\n' +
     '`code`\n```pre```\n```markup\nformatted```'
 
 const result = mdv1.to_entities(text)
@@ -351,7 +369,7 @@ const text = '< b >bold< / b >\n' +
     '< span class = "tg-spoiler" >spoiler< / span >\n' +
     '< tg-spoiler >telegram spoiler< / tg-spoiler >\n' +
     '< a href = "http://www.example.com/" >link< / a >\n' +
-    '< a href = "tg://user?id=123456789" >mention< / a >\n' +
+    '< a href = "tg://user?id=1234567890" >mention< / a >\n' +
     '< tg-emoji emoji-id = "5368324170671202286" >👍< / tg-emoji >\n' +
     '< code >code< /code >\n' +
     '< blockquote >b\nl\no\nc\nk< / blockquote >\n' +
@@ -379,7 +397,7 @@ const text = '*bold*\n' +
     '~strikethrough~\n' +
     '||spoiler||\n' +
     '[link](http://www.example.com/)\n' +
-    '[mention](tg://user?id=123456789)\n' +
+    '[mention](tg://user?id=1234567890)\n' +
     '![👍](tg://emoji?id=5368324170671202286)\n' +
     '`code`\n' +
     '>b\n>l\n>o\n>c\n>k\n' +
@@ -402,9 +420,10 @@ const result = md.to_entities(text)
 You can use `.to_entities()` with stored user contents as well.
 ```
 .to_entities(
-  string      your_text,
-  string|null user_text = null,
-  array|null  user_text_entities = [ ]
+  string          text,
+  boolean|number  maxlen = false,
+  string|null     user_text = null,
+  array|null      user_text_entities = [ ]
 )
 ```
 
@@ -417,7 +436,7 @@ const text = '*bold*\n' +
     '~strikethrough~\n' +
     '||spoiler||\n' +
     '[link](http://www.example.com/)\n' +
-    '[mention](tg://user?id=123456789)\n' +
+    '[mention](tg://user?id=1234567890)\n' +
     '![👍](tg://emoji?id=5368324170671202286)\n' +
     '`code`\n' +
     '>b\n>l\n>o\n>c\n>k\n' +
@@ -433,6 +452,7 @@ const userTextEntities = [ {
 
 const result = md.to_entities(
   text,
+  true, // or 4096
   userText + ln(2),
   userTextEntities
 )
@@ -444,6 +464,661 @@ const result = md.to_entities(
   }
 ]
 */
+```
+
+### Using Unicode
+You can use a few Unicode symbols with the `symbol` function.
+```
+for (const code of [
+  'a',  // α (alpha)
+  'b',  // β (beta)
+  'g',  // γ (gamma)
+  'd',  // δ (delta)
+  '0',  // 🯰
+  '1',  // 🯱
+  '2',  // 🯲
+  '3',  // 🯳
+  '4',  // 🯴
+  '5',  // 🯵
+  '6',  // 🯶
+  '7',  // 🯷
+  '8',  // 🯸
+  '9',  // 🯹
+  '8-', // ∞ (infinity)
+  '+',  // + (plus)
+  '-',  // − (minus)
+  '+-', // ± (plus‐minus)
+  '*',  // × (multiplication)
+  '/',  // ÷ (division)
+  '=',  // =
+  '>=', // ≥
+  '<=', // ≤
+  '~~', // ≈
+  '!=', // ≠
+  '.',  // · (middle dot)
+  'o',  // ° (degree)
+  'O',  // • (bullet)
+  '>_', // 🮥
+  '<',  // ‹
+  '>',  // ›
+  '<<', // «
+  '>>', // »
+  'h',  // ‐ (hyphen)
+  'H',  // ‑ (non‐breaking hyphen)
+  '-',  // – (en dash)
+  '--', // — (em dash)
+  '...' // … (horizontal ellipsis)
+]) console.log(`${code} => ${symbol(code)}`)
+```
+
+### Forming Links
+You can form links to Telegram users, bots, groups, channels, etc.
+```
+const result = telink.create({
+  // string
+  // username, telephone number, etc.
+  subject: 'mybot',
+  // number|string
+  // message ID, application name, etc.
+  element: 'myapp',
+  // string
+  // includes a start parameter entity: `?start=message`
+  entity: 'message',
+  // scalar
+  // includes a start parameter entity ID: `?start=message-8`
+  id: 8,
+  // object
+  // query parameters
+  params: {
+    mode: telink.parameters.mode.compact,
+    choose: Object.values(telink.parameters.choose)
+  },
+  // string
+  // username or telephone number of a specific user
+  // to open the attachment menu in the chat therewith
+  user: 'username',
+  // string|boolean
+  // starting operation
+  // true to delegate the selection
+  launch: true,
+  // string|boolean|null
+  // prompts to add the bot to the attachment menu
+  // null for links not related to applications
+  attach: true,
+  // boolean
+  // true to use the `t.me` syntax
+  short: true,
+  // boolean
+  // true to use the `tg` syntax
+  proto: false
+})
+// https://t.me/username/myapp
+// ?attach=mybot&startattach=message-8
+// &mode=compact&choose=users+bots+groups+channels
+```
+You can opt to use the `t.me` or `tg` syntax by default.
+```
+(telink.short = true) && (telink.proto = false)
+``` 
+
+#### User Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.user(1234567890),
+  // tg:user?id=1234567890
+  telink.user('+1234567890'),
+  // t.me/+1234567890
+  telink.user('username'),
+  // t.me/username
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.user(1234567890),
+  // tg://user?id=1234567890
+  telink.user('+1234567890'),
+  // tg://resolve?phone=1234567890
+  telink.user('username')
+  // tg://resolve?domain=username
+].join(ln())
+```
+
+#### Bot & App Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+
+  telink.bot('mybot'),
+  // t.me/mybot
+  telink.bot('mybot', 'message', 8),
+  // t.me/mybot?start=message-8
+
+  telink.bot('mybot', null, null, true),
+  // t.me/mybot?startgroup
+  telink.bot('mybot', 'message', 8, true),
+  // t.me/mybot?startgroup=message-8
+  telink.bot('mybot', 'message', 8, true, [ 'delete_messages' ]),
+  // t.me/mybot?startgroup=message-8&admin=delete_messages
+  telink.bot('mybot', true, [ 'post_messages' ]),
+  // t.me/mybot?startchannel&admin=post_messages
+
+  telink.game('mybot', 'short_name'),
+  // t.me/mybot?game=short_name
+
+  telink.app('mybot'),
+  // t.me/mybot?startapp
+  telink.app('mybot', null, 'comment', 8),
+  // t.me/mybot?startapp=comment-8
+  telink.app('mybot', null, 'comment', 8, true),
+  // t.me/mybot?startapp=comment-8&mode=compact
+
+  telink.app('mybot', 'myapp'),
+  // t.me/mybot/myapp
+  telink.app('mybot', 'myapp', 'comment', 8),
+  // t.me/mybot/myapp?startapp=comment-8
+  telink.app('mybot', 'myapp', 'comment', 8, true),
+  // t.me/mybot/myapp?startapp=comment-8&mode=compact
+
+  telink.app('mybot', true),
+  // t.me/mybot?startattach
+  telink.app('mybot', true, 'comment', 8),
+  // t.me/mybot?startattach=comment-8
+
+  telink.app('mybot', null, null, null, false, 'username'),
+  // t.me/username?attach=mybot
+  telink.app('mybot', null, 'comment', 8, false, '+1234567890'),
+  // t.me/+1234567890?attach=mybot&startattach=comment-8
+
+  telink.app('mybot', true, null, null, false, [ 'users', 'bots' ]),
+  // t.me/mybot?startattach&choose=users+bots
+  telink.app('mybot', true, 'comment', 8, false, [ 'groups', 'channels' ]),
+  // t.me/mybot?startattach=comment-8&choose=groups+channels
+
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+
+  telink.bot('mybot'),
+  // tg://resolve?domain=mybot
+  telink.bot('mybot', 'message', 8),
+  // tg://resolve?domain=mybot&start=message-8
+
+  telink.bot('mybot', null, null, true),
+  // tg://resolve?domain=mybot&startgroup
+  telink.bot('mybot', 'message', 8, true),
+  // tg://resolve?domain=mybot&startgroup=message-8
+  telink.bot('mybot', 'message', 8, true, [ 'delete_messages' ]),
+  // tg://resolve?domain=mybot&startgroup=message-8&admin=delete_messages
+  telink.bot('mybot', true, [ 'post_messages' ]),
+  // tg://resolve?domain=mybot&startchannel&admin=post_messages
+
+  telink.game('mybot', 'short_name'),
+  // tg://resolve?domain=mybot&game=short_name
+
+  telink.app('mybot'),
+  // tg://resolve?domain=mybot&startapp
+  telink.app('mybot', null, 'comment', 8),
+  // tg://resolve?domain=mybot&startapp=comment-8
+  telink.app('mybot', null, 'comment', 8, true),
+  // tg://resolve?domain=mybot&startapp=comment-8&mode=compact
+
+  telink.app('mybot', 'myapp'),
+  // tg://resolve?domain=mybot&appname=myapp
+  telink.app('mybot', 'myapp', 'comment', 8),
+  // tg://resolve?domain=mybot&appname=myapp&startapp=comment-8
+  telink.app('mybot', 'myapp', 'comment', 8, true),
+  // tg://resolve?domain=mybot&appname=myapp&startapp=comment-8&mode=compact
+
+  telink.app('mybot', true),
+  // tg://resolve?domain=mybot&startattach
+  telink.app('mybot', true, 'comment', 8),
+  // tg://resolve?domain=mybot&startattach=comment-8
+
+  telink.app('mybot', null, null, null, false, 'username'),
+  // tg://resolve?domain=username&attach=mybot
+  telink.app('mybot', null, 'comment', 8, false, '+1234567890'),
+  // tg://resolve?phone=1234567890&attach=mybot&startattach=comment-8
+
+  telink.app('mybot', true, null, null, false, [ 'users', 'bots' ]),
+  // tg://resolve?domain=mybot&startattach&choose=users+bots
+  telink.app('mybot', true, 'comment', 8, false, [ 'groups', 'channels' ])
+  // tg://resolve?domain=mybot&startattach=comment-8&choose=groups+channels
+].join(ln())
+```
+
+#### Group & Channel Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.group('mygroup'),
+  // t.me/mygroup
+  telink.channel('mychannel'),
+  // t.me/mychannel
+  telink.invite('hash'),
+  // t.me/+hash
+  telink.invite('hash', false),
+  // t.me/joinchat/hash
+  telink.folder('slug'),
+  // t.me/addlist/slug
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.group('mygroup'),
+  // tg://resolve?domain=mygroup
+  telink.channel('mychannel'),
+  // tg://resolve?domain=mychannel
+  telink.invite('hash'),
+  // tg://join?invite=hash
+  telink.folder('slug')
+  // tg://addlist?slug=slug
+].join(ln())
+```
+
+#### Message Links
+```
+const tid = 1 // thread ID
+const mid = 2 // message ID
+const cid = 3 // comment ID
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.forum(12345, null, tid),
+  // t.me/c/12345?thread=1
+  telink.forum('mygroup', mid, tid),
+  // t.me/mygroup/1/2
+  telink.message(67890, mid, cid, tid, true),
+  // t.me/c/67890/1/2?single&comment=3
+  telink.message('mychannel', mid, cid, tid, false, 3723, 'h'),
+  // t.me/mychannel/1/2?comment=3&t=1h02m03s
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.forum(12345, null, tid),
+  // tg://privatepost?channel=12345&thread=1
+  telink.forum('mygroup', mid, tid),
+  // tg://resolve?domain=mygroup&post=2&thread=1
+  telink.message(67890, mid, cid, tid, true),
+  // tg://privatepost?channel=67890&post=2&single&thread=1&comment=3
+  telink.message('mychannel', mid, cid, tid, false, '1h02m03s', 'm')
+  // tg://resolve?domain=mychannel&post=2&thread=1&comment=3&t=62:03
+].join(ln())
+```
+
+#### Video/Voice Chats & Livestream Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.videochat('mygroup'),
+  // t.me/mygroup?videochat
+  telink.videochat('mygroup', 'invite_hash'),
+  // t.me/mygroup?videochat=invite_hash
+  telink.voicechat('mygroup'),
+  // t.me/mygroup?voicechat
+  telink.voicechat('mygroup', 'invite_hash'),
+  // t.me/mygroup?voicechat=invite_hash
+  telink.livestream('mychannel'),
+  // t.me/mychannel?livestream
+  telink.livestream('mychannel', 'invite_hash'),
+  // t.me/mychannel?livestream=invite_hash
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.videochat('mygroup'),
+  // tg://resolve?domain=mygroup&videochat
+  telink.videochat('mygroup', 'invite_hash'),
+  // tg://resolve?domain=mygroup&videochat=invite_hash
+  telink.voicechat('mygroup'),
+  // tg://resolve?domain=mygroup&voicechat
+  telink.voicechat('mygroup', 'invite_hash'),
+  // tg://resolve?domain=mygroup&voicechat=invite_hash
+  telink.livestream('mychannel'),
+  // tg://resolve?domain=mychannel&livestream
+  telink.livestream('mychannel', 'invite_hash')
+  // tg://resolve?domain=mychannel&livestream=invite_hash
+].join(ln())
+```
+
+#### Share Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.share('www.example.com'),
+  // t.me/share?url=www.example.com
+  telink.share('www.example.com', 'Example'),
+  // t.me/share?url=www.example.com&text=Example
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.share('www.example.com'),
+  // tg://msg_url?url=www.example.com
+  telink.share('www.example.com', 'Example')
+  // tg://msg_url?url=www.example.com&text=Example
+].join(ln())
+```
+
+#### Boost Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.boost(12345),
+  // t.me/c/12345?boost
+  telink.boost(67890, false),
+  // t.me/boost?c=67890
+  telink.boost('newchannel'),
+  // t.me/boost/newchannel
+  telink.boost('oldchannel', false),
+  // t.me/oldchannel?boost
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.boost(88888),
+  // tg://boost?channel=88888
+  telink.boost('anychannel')
+  // tg://boost?domain=anychannel
+].join(ln())
+```
+
+#### Story Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.story('username', 'id'),
+  // t.me/username/s/id
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.story('username', 'id')
+  // tg://resolve?domain=username&story=id
+].join(ln())
+```
+
+#### Emojis & Stickers Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.emoji('5368324170671202286'),
+  // tg://emoji?id=5368324170671202286
+  telink.emojis('slug'),
+  // t.me/addemoji/slug
+  telink.stickers('slug'),
+  // t.me/addstickers/slug
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.emoji('5368324170671202286'),
+  // tg://emoji?id=5368324170671202286
+  telink.emojis('slug'),
+  // tg://addemoji?set=slug
+  telink.stickers('slug')
+  // tg://addstickers?set=slug
+].join(ln())
+```
+
+#### Premium Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.premium('giftcode'),
+  // t.me/giftcode
+  telink.premium(1, 'slug'),
+  // t.me/giftcode/slug
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.premium('giftcode'),
+  // tg://giftcode
+  telink.premium(1, 'slug'),
+  // tg://giftcode?slug=slug
+  telink.premium('offer'),
+  // tg://premium_offer
+  telink.premium(2, 'referrer'),
+  // tg://premium_offer?ref=referrer
+  telink.premium('multigift'),
+  // tg://premium_multigift
+  telink.premium(3, 'referrer')
+  // tg://premium_multigift?ref=referrer
+].join(ln())
+```
+
+#### Invoice Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.invoice('slug'),
+  // t.me/$slug
+  telink.invoice('slug', false),
+  // t.me/invoice/slug
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.invoice('slug')
+  // tg://invoice?slug=slug
+].join(ln())
+```
+
+#### Language Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.language('slug'),
+  // t.me/setlanguage/slug
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.language('slug')
+  // tg://setlanguage?lang=slug
+].join(ln())
+```
+
+#### Theme Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.theme('name'),
+  // t.me/addtheme/name
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.theme('name')
+  // tg://addtheme?slug=name
+].join(ln())
+```
+
+#### Wallpaper Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+
+  telink.bg('slug', false, false),
+  // t.me/bg/slug
+  telink.bg('slug', true, true),
+  // t.me/bg/slug?mode=blur+motion
+
+  telink.bg('DC143C'),
+  // t.me/bg/DC143C
+  telink.bg('FF0000', 'FFC0CB'),
+  // t.me/bg/FF0000-FFC0CB
+  telink.bg('FF7F50', 'FFA500', 90),
+  // t.me/bg/FF7F50-FFA500?rotation=90
+
+  telink.bg('FFD700', 'FFFF00', 'FFE4B5'),
+  // t.me/bg/FFD700~FFFF00~FFE4B5
+  telink.bg('F0E68C', 'E6E6FA', 'EE82EE', 'DA70D6'),
+  // t.me/bg/F0E68C~E6E6FA~EE82EE~DA70D6
+
+  telink.bg('slug', 'FF00FF', 10),
+  // t.me/bg/slug?bg_color=FF00FF&intensity=10
+  telink.bg('slug', '800080', 20, true),
+  // t.me/bg/slug?bg_color=800080&intensity=20&mode=motion
+
+  telink.bg('slug', '4B0082', '00FF00', 30),
+  // t.me/bg/slug?bg_color=4B0082-00FF00&intensity=30
+  telink.bg('slug', '008000', '008080', 40, 180),
+  // t.me/bg/slug?bg_color=008000-008080&intensity=40&rotation=180
+  telink.bg('slug', '00FFFF', '7FFFD4', 50, 270, true),
+  // t.me/bg/slug?bg_color=00FFFF-7FFFD4&intensity=50&rotation=270&mode=motion
+
+  telink.bg('slug', '40E0D0', '0000FF', '000080', 60),
+  // t.me/bg/slug?bg_color=40E0D0~0000FF~000080&intensity=60
+  telink.bg('slug', 'D2691E', 'A52A2A', '800000', 70, true),
+  // t.me/bg/slug?bg_color=D2691E~A52A2A~800000&intensity=70&mode=motion
+  telink.bg('slug', 'FFFFFF', 'F0FFFF', 'F5F5DC', 'FFFFF0', 80),
+  // t.me/bg/slug?bg_color=FFFFFF~F0FFFF~F5F5DC~FFFFF0&intensity=80
+  telink.bg('slug', 'FAF0E6', 'C0C0C0', '808080', '000000', 90, true),
+  // t.me/bg/slug?bg_color=FAF0E6~C0C0C0~808080~000000&intensity=90&mode=motion
+
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+
+  telink.bg('slug', false, false),
+  // tg://bg?slug=slug
+  telink.bg('slug', true, true),
+  // tg://bg?slug=slug&mode=blur+motion
+
+  telink.bg('DC143C'),
+  // tg://bg?color=DC143C
+  telink.bg('FF0000', 'FFC0CB'),
+  // tg://bg?gradient=FF0000-FFC0CB
+  telink.bg('FF7F50', 'FFA500', 90),
+  // tg://bg?gradient=FF7F50-FFA500&rotation=90
+
+  telink.bg('FFD700', 'FFFF00', 'FFE4B5'),
+  // tg://bg?gradient=FFD700~FFFF00~FFE4B5
+  telink.bg('F0E68C', 'E6E6FA', 'EE82EE', 'DA70D6'),
+  // tg://bg?gradient=F0E68C~E6E6FA~EE82EE~DA70D6
+
+  telink.bg('slug', 'FF00FF', 10),
+  // tg://bg?slug=slug&bg_color=FF00FF&intensity=10
+  telink.bg('slug', '800080', 20, true),
+  // tg://bg?slug=slug&bg_color=800080&intensity=20&mode=motion
+
+  telink.bg('slug', '4B0082', '00FF00', 30),
+  // tg://bg?slug=slug&bg_color=4B0082-00FF00&intensity=30
+  telink.bg('slug', '008000', '008080', 40, 180),
+  // tg://bg?slug=slug&bg_color=008000-008080&intensity=40&rotation=180
+  telink.bg('slug', '00FFFF', '7FFFD4', 50, 270, true),
+  // tg://bg?slug=slug&bg_color=00FFFF-7FFFD4&intensity=50&rotation=270&mode=motion
+
+  telink.bg('slug', '40E0D0', '0000FF', '000080', 60),
+  // tg://bg?slug=slug&bg_color=40E0D0~0000FF~000080&intensity=60
+  telink.bg('slug', 'D2691E', 'A52A2A', '800000', 70, true),
+  // tg://bg?slug=slug&bg_color=D2691E~A52A2A~800000&intensity=70&mode=motion
+  telink.bg('slug', 'FFFFFF', 'F0FFFF', 'F5F5DC', 'FFFFF0', 80),
+  // tg://bg?slug=slug&bg_color=FFFFFF~F0FFFF~F5F5DC~FFFFF0&intensity=80
+  telink.bg('slug', 'FAF0E6', 'C0C0C0', '808080', '000000', 90, true)
+  // tg://bg?slug=slug&bg_color=FAF0E6~C0C0C0~808080~000000&intensity=90&mode=motion
+].join(ln())
+```
+
+#### Proxy Links
+```
+const result = [
+  telink.proxy('www.example.com', 443, 'secret'),
+  // https://telegram.me/proxy
+  // ?server=www.example.com&port=443&secret=secret
+  telink.socks5('www.example.com', 443, 'username', 'password')
+  // https://telegram.me/socks
+  // ?server=www.example.com&port=443&user=username&pass=password
+].join(ln())
+```
+
+#### Settings Links
+```
+const result = [
+  telink.settings(),
+  // tg://settings
+  telink.change_number(),
+  // tg://settings/change_number
+  telink.devices(),
+  // tg://settings/devices
+  telink.folders(),
+  // tg://settings/folders
+  telink.languages(),
+  // tg://settings/language
+  telink.privacy(),
+  // tg://settings/privacy
+  telink.auto_delete(),
+  // tg://settings/auto_delete
+  telink.edit_profile(),
+  // tg://settings/edit_profile
+  telink.themes()
+  // tg://settings/themes
+].join(ln())
+```
+
+#### Passport Links
+```
+const result = [
+  telink.passport({
+    bot_id: 9876543210,
+    scope: { d: [ { _: 'pd' } ], v: 1 },
+    public_key: 'bot_public_key',
+    nonce: 'nonce',
+    callback_url: 'https://www.example.com/callback/'
+  })
+].join(ln())
+// tg://passport
+// ?bot_id=9876543210
+// &scope=%7B%22d%22%3A%5B%7B%22_%22%3A%22pd%22%7D%5D%2C%22v%22%3A1%7D
+// &public_key=bot_public_key
+// &nonce=nonce
+// &callback_url=https%3A%2F%2Fwww.example.com%2Fcallback%2F
+```
+
+#### Other Links
+```
+const result = [
+  (telink.https = null) ||
+  (telink.short = true),
+  // true
+  telink.contact('token'),
+  // t.me/contact/token
+  telink.login('code'),
+  // t.me/login/code
+  telink.login(null, 'base64encodedtoken'),
+  // tg://login?token=base64encodedtoken
+  telink.confirm_phone('+1234567890', 'hash'),
+  // t.me/confirmphone?phone=1234567890&hash=hash
+  (telink.short = false) ||
+  (telink.proto = true),
+  // true
+  telink.contact('token'),
+  // tg://contact?token=token
+  telink.login('code'),
+  // tg://login?code=code
+  telink.login(null, 'base64encodedtoken'),
+  // tg://login?token=base64encodedtoken
+  telink.confirm_phone('+1234567890', 'hash')
+  // tg://confirmphone?phone=1234567890&hash=hash
+].join(ln())
 ```
 
 ## Contributing
