@@ -15,13 +15,15 @@ const {
   symbol, sm,
   link, telink
 } = require('teleform')
-// import {
+/*
+import {
   STYLES, PARSE_MODES,
   mdv2, md, html, mdv1,
   newlines, ln,
   symbol, sm,
   link, telink
 } from 'teleform'
+*/
 
 console.log(STYLES === PARSE_MODES) // true
 console.log(md === mdv2)            // true
