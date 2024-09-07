@@ -26,36 +26,38 @@ class format {
   static _to_escape = [ ]
   static _tags = (type, optional) => ({ }[type])
 
+  static _limits = { length: 4096 }
   static _name = name => `telegram-formatting‐${name}`
   
   static _link_regexp = /tg:\/\/(?<type>user|emoji)\?id=(?<id>.+)/
   
-  static from_entities(text, entities) {
-    let text_name, __, tags = { };
-    [ text_name, __, text, entities ] = this._args(text, entities)
-    this._tags_from_entities(entities, tags)
+  static from_entities(...args) {
+    const [ text_name, __, text, entities ] = this._args(...args)
+    const tags = this._tags_from_entities(entities)
     return { [ text_name ]: this._text_from_entities(text, tags) }
   }
-  static to_entities(text, to_text = '', to_entities = [ ]) {
-    let __, text_name, entities_name
-    [ text_name, entities_name, text, __ ] = this._args(text)
+  static to_entities(args, length = false, to_text = '', to_entities = [ ]) {
+    const [ text_name, entities_name, text, __ ] = this._args(args)
     const result = this._text_to_entities(text, to_text.length)
-    return {
-      [ text_name ]: to_text + result.text,
-      [ entities_name ]: to_entities.concat(result.entities)
+    const output = {
+      text: to_text + result.text,
+      entities: to_entities.concat(result.entities)
     }
+    if (length === true) length = this._limits.length
+    if (length > 0) this._clip(output, length)
+    return { [ text_name ]: output.text, [ entities_name ]: output.entities }
   }
 
-  static _args(text, entities) {
-    if (typeof text !== 'object')
-      return [ 'text', 'entities', text, entities ]
-    const name = text?.caption ? 'caption' : 'text'
+  static _args(args, entities) {
+    if (typeof args !== 'object')
+      return [ 'text', 'entities', args, entities ]
+    const name = args?.caption ? 'caption' : 'text'
     return [
       name, name === 'text' ? 'entities' : `${name}_entities`,
-      text?.text ?? text?.caption, text?.entities ?? text?.caption_entities
+      args?.text ?? args?.caption, args?.entities ?? args?.caption_entities
     ]
   }
-  static _tags_from_entities(entities, tags) {
+  static _tags_from_entities(entities, tags = { }) {
     for (const entity of entities ?? [ ]) {
       const { type, offset, length, url, user, language, custom_emoji_id } = entity
       const data = this._tags(type, url ?? user?.id ?? language ?? custom_emoji_id)
@@ -65,6 +67,7 @@ class format {
       tags[offset].push({ type: type, kind: 'opening', data: data[0] })
       tags[tagend].push({ type: type, kind: 'closing', data: data[1] })
     }
+    return tags
   }
   static _text_from_entities(text, tags) {
     let result_text = '', open = [ ]
@@ -164,6 +167,14 @@ class format {
     }
     result_text += this.unescape(text.slice(from, text.length))
     return { text: result_text, entities: result_entities }
+  }
+  static _clip(output, length) {
+    if (output.text.length > length) {
+      output.text = output.text.substring(0, length)
+      output.entities = output.entities.filter(entity => {
+        return entity.offset + entity.length <= length
+      })
+    }
   }
   static _toggle(string, to) {
     const { text, entities } = this.to_entities(string)
