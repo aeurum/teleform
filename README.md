@@ -38,7 +38,7 @@ You can use Markdown-style or HTML-style formatting.
 #### Markdown
 Note that entities must not be nested; and that escaping inside entities is not allowed, so an entity must be closed first and reopened again.
 ```
-const text = [
+const result = { text: [
   mdv1.bold('_bold_'),
   // mdv1.bold('2 * 2 = 4'), // will fail
   mdv1.b('2 ') + mdv1.escape('*') + mdv1.b(' 2 = 4'),
@@ -46,19 +46,19 @@ const text = [
   // mdv1.italic('snake_case'), // will fail
   mdv1.i('snake') + mdv1.escape('_') + mdv1.i('case'),
   mdv1.link('*_link_*', 'http://www.example.com/'),
-  mdv1.link('link with ‘\\’', 'http://www.example.com/\\'),
-  mdv1.bold('link with ‘)’ will fail'),
+  mdv1.link('link with ‘\\’', 'http://www.example.com//\\'),
+  // mdv1.link('will fail', 'http://www.example.com/()'),
   mdv1.mention('*_mention_*', 1234567890),
   mdv1.code('code'),
   mdv1.pre('code block'),
   mdv1.pre('console.log("javascript code block")', 'javascript')
-].join(newlines())
+].join(newlines()) }
 ```
 
 #### HTML
 Note that custom emoji entities can only be used by bots that purchased additional usernames on [Fragment](https://fragment.com/).
 ```
-const text = [
+const result = { text: [
   html.bold('<bold>'),
   html.strong('<strong>'),
   html.italic('<italic>'),
@@ -88,13 +88,13 @@ const text = [
   html.code('<code>'),
   html.pre('<code block>'),
   html.pre('true && console.log("javascript code block")', 'javascript')
-].join(newlines())
+].join(newlines()) }
 ```
 
 #### MarkdownV2
 Note that in case of ambiguity between `italic` and `underline` entities, `__` is always greadily treated from left to right.
 ```
-const text = [
+const result = { text: [
   md.b('*bold*'),
   md.i('_italic_'),
   md.u('__underline__'),
@@ -118,7 +118,7 @@ const text = [
   md.code('`code`'),
   md.pre('```code block```'),
   md.pre('true && console.log("```javascript code block```")', 'javascript')
-].join(ln())
+].join(ln()) }
 ```
 
 ### Escaping
@@ -135,26 +135,34 @@ You can use `.escape()` methods to escape special characters.
 #### Markdown
 Use `mdv1.escape()` to escape special characters outside of entities.
 ```
-const text = mdv1.escape('[*_`just plain text`_*]')
+const text = '[*_`just plain text`_*]'
+const result = { text: mdv1.escape(text) }
 ```
 
 #### HTML
 Use `html.escape()` to replace special characters with HTML entities.
 ```
-const text = html.escape('<& just plain text &>')
+const text = '<& just plain text &>'
+const result = { text: html.escape(text) }
 ```
 
 #### MarkdownV2
 Use `md.escape()` to escape special characters anywhere in the message.
 ```
-const text = md.escape('([{ \\~_=/ | `_> just plain text -_* ! \\+_#/ }])')
+const text = '([{ \\~_=/ | `_> ' +
+             'just plain text' +
+             ' -_* ! \\+_#/ }])'
+const result = { text: md.escape(text) }
 ```
 You can also escape Markdown-formatted text, which may contain ‘*’, ‘_’, ‘__’, ‘~’, ‘||’ and ‘`’ special characters.
 ```
-const text = md.escape('*Hello!*\n\n' +
+const result = { text: md.escape(
+  '*Hello!*\n\n' +
   'Have you __had to__ ~escape _special characters_~ in your locale file?\n' +
   'Guess what? ||You need to do it no longer!||\n' +
-  'Now you can use regular Markdown text alongside ‘\\*’, ‘\\_’, etc.', true)
+  'Now you can use regular Markdown text alongside ‘\\*’, ‘\\_’, etc.',
+  true
+) }
 ```
 
 ### Unescaping
@@ -178,20 +186,22 @@ You can switch text formatting styles.
 
 #### Markdown to HTML
 ```
-const text = mdv1.to_html('<& *just bold text* &>')
+const text = '<& *just bold text* &>'
+const result = { text: mdv1.to_html(text) }
 ```
 
 #### HTML to MarkdownV2
 ```
-const text = html.to_md(
-  '([{ \\~_=/ | `_> ' +
-  '<b>bold <i>italic <u>underline</u></i></b>' +
-  ' -_* ! \\+_#/ }])');
+const text = '([{ \\~_=/ | `_> ' +
+             '<b>bold <i>italic <u>underline</u></i></b>' +
+             ' -_* ! \\+_#/ }])'
+const result = { text: html.to_md(text) }
 ```
 
 #### MarkdownV2 to HTML
 ```
-const text = md.to_html('<& *bold _italic __underline___* &\\>')
+const text = '<& *bold _italic __underline___* &\\>'
+const result = { text: md.to_html(text) }
 ```
 
 ### Conversion
@@ -445,7 +455,7 @@ const text = '*bold*\n' +
     '```pre```\n' +
     '```markup\nformatted```'
 const userText = 'My name is Anatoly'
-const userTextEntities = [ {
+const userEntities = [ {
   offset: 0,
   length: 18,
   type: 'bold'
@@ -455,7 +465,7 @@ const result = md.to_entities(
   text,
   true, // or 4096
   userText + ln(2),
-  userTextEntities
+  userEntities
 )
 /*
 [
@@ -515,7 +525,7 @@ for (const code of [
 ### Forming Links
 You can form links to Telegram users, bots, groups, channels, etc.
 ```
-const result = telink.create({
+const result = { text: telink.create({
   // string
   // username, telephone number, etc.
   subject: 'mybot',
@@ -552,7 +562,7 @@ const result = telink.create({
   // boolean
   // true to use the `tg` syntax
   proto: false
-})
+}) }
 // https://t.me/username/myapp
 // ?attach=mybot&startattach=message-8
 // &mode=compact&choose=users+bots+groups+channels
@@ -564,7 +574,7 @@ You can opt to use the `t.me` or `tg` syntax by default.
 
 #### User Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -583,12 +593,12 @@ const result = [
   // tg://resolve?phone=1234567890
   telink.user('username')
   // tg://resolve?domain=username
-].join(ln())
+].join(ln()) }
 ```
 
 #### Bot & App Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -688,12 +698,12 @@ const result = [
   // tg://resolve?domain=mybot&startattach&choose=users+bots
   telink.app('mybot', true, 'comment', 8, false, [ 'groups', 'channels' ])
   // tg://resolve?domain=mybot&startattach=comment-8&choose=groups+channels
-].join(ln())
+].join(ln()) }
 ```
 
 #### Group & Channel Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -718,7 +728,7 @@ const result = [
   // tg://join?invite=hash
   telink.folder('slug')
   // tg://addlist?slug=slug
-].join(ln())
+].join(ln()) }
 ```
 
 #### Message Links
@@ -726,7 +736,7 @@ const result = [
 const tid = 1 // thread ID
 const mid = 2 // message ID
 const cid = 3 // comment ID
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -749,12 +759,12 @@ const result = [
   // tg://privatepost?channel=67890&post=2&single&thread=1&comment=3
   telink.message('mychannel', mid, cid, tid, false, '1h02m03s', 'm')
   // tg://resolve?domain=mychannel&post=2&thread=1&comment=3&t=62:03
-].join(ln())
+].join(ln()) }
 ```
 
 #### Video/Voice Chats & Livestream Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -785,12 +795,12 @@ const result = [
   // tg://resolve?domain=mychannel&livestream
   telink.livestream('mychannel', 'invite_hash')
   // tg://resolve?domain=mychannel&livestream=invite_hash
-].join(ln())
+].join(ln()) }
 ```
 
 #### Share Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -805,12 +815,12 @@ const result = [
   // tg://msg_url?url=www.example.com
   telink.share('www.example.com', 'Example')
   // tg://msg_url?url=www.example.com&text=Example
-].join(ln())
+].join(ln()) }
 ```
 
 #### Boost Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -829,33 +839,31 @@ const result = [
   // tg://boost?channel=88888
   telink.boost('anychannel')
   // tg://boost?domain=anychannel
-].join(ln())
+].join(ln()) }
 ```
 
 #### Story Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
-  telink.story('username', 'id'),
-  // t.me/username/s/id
+  telink.story('username', 'story_id'),
+  // t.me/username/s/story_id
   (telink.short = false) ||
   (telink.proto = true),
   // true
-  telink.story('username', 'id')
-  // tg://resolve?domain=username&story=id
-].join(ln())
+  telink.story('username', 'story_id')
+  // tg://resolve?domain=username&story=story_id
+].join(ln()) }
 ```
 
 #### Emojis & Stickers Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
-  telink.emoji('5368324170671202286'),
-  // tg://emoji?id=5368324170671202286
   telink.emojis('slug'),
   // t.me/addemoji/slug
   telink.stickers('slug'),
@@ -869,12 +877,12 @@ const result = [
   // tg://addemoji?set=slug
   telink.stickers('slug')
   // tg://addstickers?set=slug
-].join(ln())
+].join(ln()) }
 ```
 
 #### Premium Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -897,12 +905,12 @@ const result = [
   // tg://premium_multigift
   telink.premium(3, 'referrer')
   // tg://premium_multigift?ref=referrer
-].join(ln())
+].join(ln()) }
 ```
 
 #### Invoice Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -915,12 +923,12 @@ const result = [
   // true
   telink.invoice('slug')
   // tg://invoice?slug=slug
-].join(ln())
+].join(ln()) }
 ```
 
 #### Language Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -931,12 +939,12 @@ const result = [
   // true
   telink.language('slug')
   // tg://setlanguage?lang=slug
-].join(ln())
+].join(ln()) }
 ```
 
 #### Theme Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -947,12 +955,12 @@ const result = [
   // true
   telink.theme('name')
   // tg://addtheme?slug=name
-].join(ln())
+].join(ln()) }
 ```
 
 #### Wallpaper Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -1036,24 +1044,24 @@ const result = [
   // tg://bg?slug=slug&bg_color=FFFFFF~F0FFFF~F5F5DC~FFFFF0&intensity=80
   telink.bg('slug', 'FAF0E6', 'C0C0C0', '808080', '000000', 90, true)
   // tg://bg?slug=slug&bg_color=FAF0E6~C0C0C0~808080~000000&intensity=90&mode=motion
-].join(ln())
+].join(ln()) }
 ```
 
 #### Proxy Links
 ```
-const result = [
+const result = { text: [
   telink.proxy('www.example.com', 443, 'secret'),
   // https://telegram.me/proxy
   // ?server=www.example.com&port=443&secret=secret
   telink.socks5('www.example.com', 443, 'username', 'password')
   // https://telegram.me/socks
   // ?server=www.example.com&port=443&user=username&pass=password
-].join(ln())
+].join(ln()) }
 ```
 
 #### Settings Links
 ```
-const result = [
+const result = { text: [
   telink.settings(),
   // tg://settings
   telink.change_number(),
@@ -1072,12 +1080,12 @@ const result = [
   // tg://settings/edit_profile
   telink.themes()
   // tg://settings/themes
-].join(ln())
+].join(ln()) }
 ```
 
 #### Passport Links
 ```
-const result = [
+const result = { text: [
   telink.passport({
     bot_id: 9876543210,
     scope: { d: [ { _: 'pd' } ], v: 1 },
@@ -1085,7 +1093,7 @@ const result = [
     nonce: 'nonce',
     callback_url: 'https://www.example.com/callback/'
   })
-].join(ln())
+].join(ln()) }
 // tg://passport
 // ?bot_id=9876543210
 // &scope=%7B%22d%22%3A%5B%7B%22_%22%3A%22pd%22%7D%5D%2C%22v%22%3A1%7D
@@ -1096,7 +1104,7 @@ const result = [
 
 #### Other Links
 ```
-const result = [
+const result = { text: [
   (telink.https = null) ||
   (telink.short = true),
   // true
@@ -1119,7 +1127,7 @@ const result = [
   // tg://login?token=base64encodedtoken
   telink.confirm_phone('+1234567890', 'hash')
   // tg://confirmphone?phone=1234567890&hash=hash
-].join(ln())
+].join(ln()) }
 ```
 
 ## Contributing
