@@ -1,5 +1,5 @@
 # Teleform
-Teleform can help you format Telegram bot messages.
+Teleform can help you format Telegram messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa, use Unicode symbols, and form Telegram links.
 
 ## Installation
 ```
@@ -7,7 +7,6 @@ npm i teleform
 ```
 
 ## Usage
-You can use Teleform to format messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa, use Unicode symbols, and form Telegram links.
 ```
 const {
   STYLES, PARSE_MODES,
