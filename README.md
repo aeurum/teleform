@@ -1,5 +1,5 @@
 # Teleform
-Teleform can help you format Telegram messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa, use Unicode symbols, and form Telegram links.
+Teleform can help you format Telegram messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa, form Telegram links, and use Unicode symbols.
 
 ## Installation
 ```
@@ -11,25 +11,28 @@ npm i teleform
 const {
   STYLES, PARSE_MODES,
   mdv2, md, html, mdv1,
-  newlines, ln,
+  link, telink,
   symbol, sm,
-  link, telink
+  spaces, ls,
+  newlines, ln
 } = require('teleform')
 /*
 import {
   STYLES, PARSE_MODES,
   mdv2, md, html, mdv1,
-  newlines, ln,
+  link, telink,
   symbol, sm,
-  link, telink
+  spaces, ls,
+  newlines, ln
 } from 'teleform'
 */
 
 console.log(STYLES === PARSE_MODES) // true
 console.log(md === mdv2)            // true
-console.log(ln === newlines)        // true
-console.log(sm === symbol)          // true
 console.log(telink === link)        // true
+console.log(sm === symbol)          // true
+console.log(ls === spaces)          // true
+console.log(ln === newlines)        // true
 ```
 
 ### Formatting
@@ -475,47 +478,6 @@ const result = md.to_entities(
   }
 ]
 */
-```
-
-### Using Unicode
-You can use a few Unicode symbols with the `symbol` function.
-```
-for (const code of [
-  '0',  // 🯰
-  '1',  // 🯱
-  '2',  // 🯲
-  '3',  // 🯳
-  '4',  // 🯴
-  '5',  // 🯵
-  '6',  // 🯶
-  '7',  // 🯷
-  '8',  // 🯸
-  '9',  // 🯹
-  '8-', // ∞ (infinity)
-  '+',  // + (plus)
-  '-',  // − (minus)
-  '+-', // ± (plus‐minus)
-  '*',  // × (multiplication)
-  '/',  // ÷ (division)
-  '=',  // =
-  '~~', // ≈
-  '>=', // ≥
-  '<=', // ≤
-  '!=', // ≠
-  '.',  // · (middle dot)
-  'o',  // ° (degree)
-  'O',  // • (bullet)
-  '>_', // 🮥
-  '<',  // ‹
-  '>',  // ›
-  '<<', // «
-  '>>', // »
-  'h',  // ‐ (hyphen)
-  'H',  // ‑ (non‐breaking hyphen)
-  '-',  // – (en dash)
-  '--', // — (em dash)
-  '...' // … (horizontal ellipsis)
-]) console.log(`${code} => ${symbol(code)}`)
 ```
 
 ### Forming Links
@@ -1124,6 +1086,47 @@ const result = { text: [
   telink.confirm_phone('+1234567890', 'hash')
   // tg://confirmphone?phone=1234567890&hash=hash
 ].join(ln()) }
+```
+
+### Using Unicode
+You can also use a few Unicode symbols with the `symbol` function.
+```
+for (const code of [
+  '0',  // 🯰
+  '1',  // 🯱
+  '2',  // 🯲
+  '3',  // 🯳
+  '4',  // 🯴
+  '5',  // 🯵
+  '6',  // 🯶
+  '7',  // 🯷
+  '8',  // 🯸
+  '9',  // 🯹
+  '8-', // ∞ (infinity)
+  '+',  // + (plus)
+  '-',  // − (minus)
+  '+-', // ± (plus‐minus)
+  '*',  // × (multiplication)
+  '/',  // ÷ (division)
+  '=',  // =
+  '~~', // ≈
+  '>=', // ≥
+  '<=', // ≤
+  '!=', // ≠
+  '.',  // · (middle dot)
+  'o',  // ° (degree)
+  'O',  // • (bullet)
+  '>_', // 🮥
+  '<',  // ‹
+  '>',  // ›
+  '<<', // «
+  '>>', // »
+  'h',  // ‐ (hyphen)
+  'H',  // ‑ (non‐breaking hyphen)
+  '-',  // – (en dash)
+  '--', // — (em dash)
+  '...' // … (horizontal ellipsis)
+]) console.log(`${code} => ${symbol(code)}`)
 ```
 
 ## Contributing
