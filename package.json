@@ -1,0 +1,30 @@
+{
+  "name": "teleform",
+  "version": "1.2.0",
+  "description": "telegram formatting",
+  "main": "dist/cjs/main.js",
+  "module": "dist/mjs/main.js",
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/main.js",
+      "require": "./dist/cjs/main.js"
+    }
+  },
+  "scripts": {
+    "test": "exit 1",
+    "build": "rm -fr dist/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./addtype"
+  },
+  "keywords": [
+    "telegram",
+    "formatting",
+    "conversion",
+    "escaping",
+    "unicode",
+    "markup",
+    "markdown",
+    "html",
+    "markdownv2"
+  ],
+  "author": "Me",
+  "license": "ISC"
+}
