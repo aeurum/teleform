@@ -1,7 +1,7 @@
 {
   "name": "teleform",
-  "version": "1.2.0",
-  "description": "telegram formatting",
+  "version": "1.2.1",
+  "description": "Format Telegram messages, escape special characters, switch formatting styles, convert special entities to formatted text and vice versa, form Telegram links, use Unicode symbols.",
   "main": "dist/cjs/main.js",
   "module": "dist/mjs/main.js",
   "exports": {
