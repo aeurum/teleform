@@ -123,7 +123,7 @@ class format {
       let type = this._entities.find(type => spot.groups[type])
       if (type === 'blockquote' && !spot.groups.blockquote_text) {
         const narrow_type = type
-        let contents = spot.groups[`${type}_contents`]
+        let contents = spot.groups[`${type}_contents`] ?? ''
         if (contents.match(/\|\|$/)) {
           type = 'expandable_blockquote'
           contents = contents.replace(/\|\|$/, '')
