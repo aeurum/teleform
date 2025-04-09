@@ -1092,40 +1092,40 @@ const result = { text: [
 You can also use a few Unicode symbols with the `symbol` function.
 ```
 for (const code of [
-  '0',  // 🯰
-  '1',  // 🯱
-  '2',  // 🯲
-  '3',  // 🯳
-  '4',  // 🯴
-  '5',  // 🯵
-  '6',  // 🯶
-  '7',  // 🯷
-  '8',  // 🯸
-  '9',  // 🯹
-  '8-', // ∞ (infinity)
-  '+',  // + (plus)
-  '-',  // − (minus)
-  '+-', // ± (plus‐minus)
-  '*',  // × (multiplication)
-  '/',  // ÷ (division)
-  '=',  // =
-  '~~', // ≈
-  '>=', // ≥
-  '<=', // ≤
-  '!=', // ≠
-  '.',  // · (middle dot)
-  'o',  // ° (degree)
-  'O',  // • (bullet)
-  '>_', // 🮥
-  '<',  // ‹
-  '>',  // ›
-  '<<', // «
-  '>>', // »
-  'h',  // ‐ (hyphen)
-  'H',  // ‑ (non‐breaking hyphen)
-  '-',  // – (en dash)
-  '--', // — (em dash)
-  '...' // … (horizontal ellipsis)
+  '0',    // 🯰
+  '1',    // 🯱
+  '2',    // 🯲
+  '3',    // 🯳
+  '4',    // 🯴
+  '5',    // 🯵
+  '6',    // 🯶
+  '7',    // 🯷
+  '8',    // 🯸
+  '9',    // 🯹
+  '8-',   // ∞ (infinity)
+  '+',    // + (plus)
+  '-',    // − (minus)
+  '+-',   // ± (plus‐minus)
+  '*',    // × (multiplication)
+  '/',    // ÷ (division)
+  '=',    // =
+  '~~',   // ≈
+  '>=',   // ≥
+  '<=',   // ≤
+  '!=',   // ≠
+  '.',    // · (middle dot)
+  'o',    // ° (degree)
+  'O',    // • (bullet)
+  '>_',   // 🮥
+  '<',    // ‹
+  '>',    // ›
+  '<<',   // «
+  '>>',   // »
+  'h',    // ‐ (hyphen)
+  'H',    // ‑ (non‐breaking hyphen)
+  '--',   // – (en dash)
+  '---',  // — (em dash)
+  '...'   // … (horizontal ellipsis)
 ]) console.log(`${code} => ${symbol(code)}`)
 ```
 
